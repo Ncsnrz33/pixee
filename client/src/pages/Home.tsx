@@ -294,23 +294,15 @@ export default function Home() {
             Baixe o Pixee agora e comece a ganhar dinheiro em minutos. Sem investimento, sem riscos.
           </p>
           
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button 
-              size="lg" 
-              className="bg-white text-emerald-600 hover:bg-gray-100 rounded-lg text-base h-12 gap-2 font-semibold"
-            >
-              Baixar no Android
-            </Button>
-            <Button 
-              size="lg" 
-              className="bg-white text-emerald-600 hover:bg-gray-100 rounded-lg text-base h-12 gap-2 font-semibold"
-            >
-              Baixar no iOS
-            </Button>
-          </div>
+          <Button 
+            size="lg" 
+            className="bg-white text-emerald-600 hover:bg-gray-100 rounded-lg text-base h-12 gap-2 font-semibold"
+          >
+            Baixar no Android
+          </Button>
 
           <p className="text-emerald-50 mt-8 text-sm">
-            Disponível em Android 7.0+ e iOS 12.0+
+            Disponível em Android 7.0+
           </p>
         </div>
       </section>
