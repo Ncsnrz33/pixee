@@ -264,7 +264,6 @@ export default function Cadastro() {
                   <SelectItem value="email">Email</SelectItem>
                   <SelectItem value="celular">Celular</SelectItem>
                   <SelectItem value="cpf">CPF</SelectItem>
-                  <SelectItem value="aleatoria">Chave Aleatória</SelectItem>
                 </SelectContent>
               </Select>
             </div>
