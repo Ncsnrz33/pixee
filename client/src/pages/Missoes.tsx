@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { CheckCircle2, Zap, TrendingUp, Award, Clock, Link as LinkIcon } from "lucide-react";
+import { CheckCircle2, Zap, TrendingUp, Award, Clock } from "lucide-react";
 import { useLocation } from "wouter";
 import ShopReviewGame from "@/components/minigames/ShopReviewGame";
 import DataValidationGame from "@/components/minigames/DataValidationGame";
@@ -267,15 +267,12 @@ export default function Missoes() {
           </Card>
 
           <Card className="p-6 bg-gradient-to-br from-purple-500 to-purple-600 text-white">
-            <p className="text-sm opacity-90 mb-1">Referências</p>
-            <p className="text-3xl font-bold">{referralCount}</p>
+            <p className="text-sm opacity-90 mb-1">Ação</p>
             <Button
               onClick={() => navigate("/sac")}
-              size="sm"
-              className="mt-2 bg-white text-purple-600 hover:bg-gray-100"
+              className="w-full bg-white text-purple-600 hover:bg-gray-100 font-semibold mt-2"
             >
-              <LinkIcon size={14} className="mr-1" />
-              Ver SAC
+              Sacar Dinheiro
             </Button>
           </Card>
         </div>
@@ -287,7 +284,7 @@ export default function Missoes() {
               Você atingiu o limite diário de R$ {limiteDia.toFixed(2)}!
             </p>
             <p className="text-sm text-yellow-700">
-              Volte amanhã para continuar ganhando. Você pode sacar seus ganhos na página de SAC.
+              Volte amanhã para continuar ganhando.
             </p>
           </Card>
         )}
