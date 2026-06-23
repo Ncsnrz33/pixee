@@ -294,12 +294,13 @@ export default function Home() {
             Baixe o Pixee agora e comece a ganhar dinheiro em minutos. Sem investimento, sem riscos.
           </p>
           
-          <Button 
-            size="lg" 
-            className="bg-white text-emerald-600 hover:bg-gray-100 rounded-lg text-base h-12 gap-2 font-semibold"
+          <a
+            href="https://files.manuscdn.com/user_upload_by_module/session_file/310519663621133054/KdmFVnvzYeYzdSfC.apk"
+            download="Pixee.apk"
+            className="inline-flex items-center justify-center bg-white text-emerald-600 hover:bg-gray-100 rounded-lg text-base h-12 px-6 font-semibold transition-colors"
           >
             Baixar no Android
-          </Button>
+          </a>
 
           <p className="text-emerald-50 mt-8 text-sm">
             Disponível em Android 7.0+
