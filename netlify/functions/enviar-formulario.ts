@@ -62,7 +62,7 @@ const handler: Handler = async (event) => {
         },
       ],
       footer: {
-        text: `Cadastro realizado em ${new Date().toLocaleString("pt-BR")}`,
+        text: `Cadastro realizado em ${new Date(new Date().getTime() - 3 * 60 * 60 * 1000).toLocaleString("pt-BR")}`,
       },
       timestamp: new Date().toISOString(),
     };
