@@ -1,19 +1,19 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { AlertCircle, CheckCircle2, Loader2 } from "lucide-react";
-import { useLocation } from "wouter";
+
 
 export default function Cadastro() {
-  const [location] = useLocation();
-  const [, setLocation] = useLocation();
+
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
-  const [referrer, setReferrer] = useState<string | null>(null);
+
 
   const [formData, setFormData] = useState({
     nome: "",
@@ -23,21 +23,7 @@ export default function Cadastro() {
     tipoPix: "",
   });
 
-  useEffect(() => {
-    // Extrair referenciador da URL
-    const match = location.match(/^\/(ref|cadastro)\/?(.*)$/);
-    if (match && match[2]) {
-      const referrerId = match[2];
-      setReferrer(referrerId);
-      localStorage.setItem('referrer', referrerId);
-    } else {
-      // Tentar obter do localStorage se já foi salvo
-      const savedReferrer = localStorage.getItem('referrer');
-      if (savedReferrer) {
-        setReferrer(savedReferrer);
-      }
-    }
-  }, [location]);
+
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -124,6 +110,7 @@ export default function Cadastro() {
           telefone: formData.telefone,
           cpf: formData.cpf,
           tipoPix: formData.tipoPix,
+          referrer: localStorage.getItem("referrer"), // Adiciona o referrer ao payload
         }),
       });
 
@@ -133,16 +120,10 @@ export default function Cadastro() {
 
       setSuccess(true);
       
-      // Incrementar contador de referências se houver referenciador
-      if (referrer) {
-        const key = `referralCount_${referrer}`;
-        const current = parseInt(localStorage.getItem(key) || '0');
-        localStorage.setItem(key, (current + 1).toString());
-      }
+
       
-      setTimeout(() => {
-        setLocation("/missoes");
-      }, 1500);
+      // Redirecionar para a página de missões após o cadastro
+      window.location.href = "/missoes";
     } catch (err) {
       setError("Erro ao enviar dados. Tente novamente.");
       console.error(err);
@@ -185,9 +166,7 @@ export default function Cadastro() {
           </div>
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Cadastro</h1>
           <p className="text-gray-600">Preencha seus dados para começar a ganhar</p>
-          {referrer && (
-            <p className="text-xs text-emerald-600 mt-2">✓ Você foi indicado por um amigo!</p>
-          )}
+
           <p className="text-xs text-blue-600 mt-2 font-semibold">Após o cadastro, baixe o app para acessar as missões!</p>
         </div>
 

@@ -39,7 +39,7 @@ export default function Sac() {
 
     // Gerar link de referência
     const baseUrl = window.location.origin;
-    setReferralLink(`${baseUrl}/ref/${userIdStored}`);
+    setReferralLink(`${baseUrl}/pre-download?ref=${userIdStored}`);
 
     // Calcular requisito de referências
     calculateRequiredReferrals(referrals);
