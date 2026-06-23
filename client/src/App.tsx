@@ -16,6 +16,7 @@ function Router() {
   return (
     <Switch>
       <Route path="/" component={Home} />
+      <Route path="/cadastro" component={Cadastro} />
       <Route path="/pre-download" component={PreDownload} />
       <Route path="/ref/:referrer" component={PreDownload} />
       <Route path="/missoes" component={Missoes} />
