@@ -243,7 +243,7 @@ export default function Missoes() {
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
               <img 
-                src="/manus-storage/pixee_4d426b94.png" 
+                src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663621133054/XCzPMTUpgMBhOytr.png" 
                 alt="Pixee Logo" 
                 className="w-8 h-8"
               />
