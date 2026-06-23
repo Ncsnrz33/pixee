@@ -4,7 +4,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { CheckCircle2, Zap, TrendingUp, Award, Clock } from "lucide-react";
 import { useLocation } from "wouter";
-import ShopReviewGame from "@/components/minigames/ShopReviewGame";
+import ShopReviewGame from "@/components/minigames/ShopReviewGameAdvanced";
 import DataValidationGame from "@/components/minigames/DataValidationGame";
 import SurveyGame from "@/components/minigames/SurveyGame";
 import ImageAnalysisGame from "@/components/minigames/ImageAnalysisGame";
@@ -258,6 +258,13 @@ export default function Missoes() {
           <Card className="p-6 bg-gradient-to-br from-blue-500 to-blue-600 text-white">
             <p className="text-sm opacity-90 mb-1">Saldo Atual</p>
             <p className="text-3xl font-bold">R$ {saldoUsuario.toFixed(2)}</p>
+            <Button
+              onClick={() => navigate("/sac")}
+              size="sm"
+              className="w-full bg-white text-blue-600 hover:bg-gray-100 font-semibold mt-3"
+            >
+              Sacar Dinheiro
+            </Button>
           </Card>
 
           <Card className="p-6 bg-gradient-to-br from-emerald-500 to-emerald-600 text-white">
@@ -266,15 +273,7 @@ export default function Missoes() {
             <p className="text-xs opacity-75 mt-1">Limite: R$ {limiteDia.toFixed(2)}</p>
           </Card>
 
-          <Card className="p-6 bg-gradient-to-br from-purple-500 to-purple-600 text-white">
-            <p className="text-sm opacity-90 mb-1">Ação</p>
-            <Button
-              onClick={() => navigate("/sac")}
-              className="w-full bg-white text-purple-600 hover:bg-gray-100 font-semibold mt-2"
-            >
-              Sacar Dinheiro
-            </Button>
-          </Card>
+
         </div>
 
         {/* Aviso de Limite */}

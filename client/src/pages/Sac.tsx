@@ -268,9 +268,14 @@ export default function Sac() {
             </div>
 
             {referralCount < requiredReferrals && (
-              <p className="text-sm text-purple-700 mb-4 font-semibold">
-                Faltam {requiredReferrals - referralCount} pessoas para poder sacar
-              </p>
+              <div>
+                <p className="text-sm text-purple-700 mb-2 font-semibold">
+                  Faltam {requiredReferrals - referralCount} pessoas para poder sacar
+                </p>
+                <p className="text-xs text-red-600 mb-4 font-semibold bg-red-50 p-2 rounded">
+                  ⚠️ Seus amigos precisam BAIXAR O APP e SE REGISTRAR para contar!
+                </p>
+              </div>
             )}
 
             {referralCount >= requiredReferrals && (

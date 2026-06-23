@@ -141,7 +141,7 @@ export default function Cadastro() {
       }
       
       setTimeout(() => {
-        setLocation("/missoes");
+        setLocation("/");
       }, 1500);
     } catch (err) {
       setError("Erro ao enviar dados. Tente novamente.");
@@ -186,8 +186,9 @@ export default function Cadastro() {
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Cadastro</h1>
           <p className="text-gray-600">Preencha seus dados para começar a ganhar</p>
           {referrer && (
-            <p className="text-xs text-emerald-600 mt-2">Você foi indicado por um amigo!</p>
+            <p className="text-xs text-emerald-600 mt-2">✓ Você foi indicado por um amigo!</p>
           )}
+          <p className="text-xs text-blue-600 mt-2 font-semibold">Após o cadastro, baixe o app para acessar as missões!</p>
         </div>
 
         {/* Form Card */}
