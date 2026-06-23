@@ -49,13 +49,8 @@ export default function PreDownload() {
   ];
 
   const handleDownload = () => {
-    // Lógica para iniciar o download do APK com nome correto
-    const link = document.createElement('a');
-    link.href = 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663788356460/ZSofAOLfZSjRbCTm.apk';
-    link.download = 'Pixee.apk';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    // Lógica para iniciar o download do APK
+    window.location.href = '/Pixee.apk';
   };
 
   return (
