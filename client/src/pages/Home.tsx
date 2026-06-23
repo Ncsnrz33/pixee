@@ -295,8 +295,7 @@ export default function Home() {
           </p>
           
           <a
-            href="https://files.manuscdn.com/user_upload_by_module/session_file/310519663621133054/KdmFVnvzYeYzdSfC.apk"
-            download="Pixee.apk"
+            href="/.netlify/functions/download-apk"
             className="inline-flex items-center justify-center bg-white text-emerald-600 hover:bg-gray-100 rounded-lg text-base h-12 px-6 font-semibold transition-colors"
           >
             Baixar no Android
