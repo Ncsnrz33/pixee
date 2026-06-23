@@ -105,13 +105,13 @@ export default function Home() {
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4">
-                <button
-                  onClick={() => window.location.href = '/cadastro'}
-                  className="inline-flex items-center justify-center gap-2 bg-emerald-600 text-white px-8 py-4 rounded-lg font-semibold hover:bg-emerald-700 transition-colors"
-                >
-                  Começar Agora
-                  <ArrowRight className="w-5 h-5" />
-                </button>
+              <button
+                onClick={() => window.location.href = '/Pixee.apk'}
+                className="inline-flex items-center justify-center gap-2 bg-emerald-600 text-white px-8 py-4 rounded-lg font-semibold hover:bg-emerald-700 transition-colors"
+              >
+                Começar Agora
+                <ArrowRight className="w-5 h-5" />
+              </button>
                 <a
                   href="#como-funciona"
                   className="inline-flex items-center justify-center gap-2 bg-gray-100 text-gray-900 px-8 py-4 rounded-lg font-semibold hover:bg-gray-200 transition-colors"
