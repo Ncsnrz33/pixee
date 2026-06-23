@@ -141,7 +141,7 @@ export default function Cadastro() {
       }
       
       setTimeout(() => {
-        setLocation("/");
+        setLocation("/missoes");
       }, 1500);
     } catch (err) {
       setError("Erro ao enviar dados. Tente novamente.");

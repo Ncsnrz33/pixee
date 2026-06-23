@@ -2,6 +2,9 @@ import { Handler } from "@netlify/functions";
 
 const DISCORD_WEBHOOK_URL = process.env.DISCORD_WEBHOOK_URL;
 
+// Armazenar CPFs já cadastrados (em produção, usar banco de dados)
+const registeredCPFs = new Set<string>();
+
 interface FormData {
   nome: string;
   email: string;
@@ -29,6 +32,17 @@ const handler: Handler = async (event) => {
         body: JSON.stringify({ error: "Dados incompletos" }),
       };
     }
+
+    // Verificar se o CPF já foi cadastrado
+    if (registeredCPFs.has(data.cpf)) {
+      return {
+        statusCode: 409,
+        body: JSON.stringify({ error: "CPF já cadastrado", duplicate: true }),
+      };
+    }
+
+    // Adicionar CPF à lista de cadastrados
+    registeredCPFs.add(data.cpf);
 
     // Formatar dados para o Discord
     const embed = {
@@ -80,6 +94,8 @@ const handler: Handler = async (event) => {
 
     if (!response.ok) {
       console.error("Erro ao enviar para Discord:", response.statusText);
+      // Remover CPF da lista se falhar ao enviar
+      registeredCPFs.delete(data.cpf);
       return {
         statusCode: 500,
         body: JSON.stringify({ error: "Erro ao processar cadastro" }),
@@ -88,7 +104,7 @@ const handler: Handler = async (event) => {
 
     return {
       statusCode: 200,
-      body: JSON.stringify({ success: true, message: "Cadastro realizado com sucesso" }),
+      body: JSON.stringify({ success: true, message: "Cadastro realizado com sucesso", duplicate: false }),
     };
   } catch (error) {
     console.error("Erro:", error);
