@@ -50,7 +50,7 @@ export default function PreDownload() {
 
   const handleDownload = () => {
     // Lógica para iniciar o download do APK
-    window.location.href = '/Pixee.apk'; // Caminho direto para o APK
+    window.location.href = 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663788356460/ZSofAOLfZSjRbCTm.apk'; // Caminho direto para o APK
   };
 
   return (
