@@ -10,7 +10,7 @@ export default function Home() {
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <img 
-              src="/manus-storage/icone_rendaja_bbd8603c.png" 
+              src="/manus-storage/pixee_4d426b94.png" 
               alt="Pixee Logo" 
               className="w-10 h-10"
             />
