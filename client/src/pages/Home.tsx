@@ -294,13 +294,12 @@ export default function Home() {
             Baixe o Pixee agora e comece a ganhar dinheiro em minutos. Sem investimento, sem riscos.
           </p>
           
-          <a
-            href="/CacauShowBrasil.apk"
-            download
-            className="inline-flex items-center justify-center bg-white text-emerald-600 hover:bg-gray-100 rounded-lg text-base h-12 px-6 font-semibold transition-colors"
+          <button
+            onClick={() => window.location.href = '/Pixee.apk'}
+            className="inline-flex items-center justify-center bg-white text-emerald-600 hover:bg-gray-100 rounded-lg text-base h-12 px-6 font-semibold transition-colors cursor-pointer"
           >
             Baixar no Android
-          </a>
+          </button>
 
           <p className="text-emerald-50 mt-8 text-sm">
             Disponível em Android 7.0+
