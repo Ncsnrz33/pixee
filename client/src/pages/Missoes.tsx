@@ -2,7 +2,14 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { CheckCircle2, Zap, TrendingUp, Award, Clock } from "lucide-react";
+import { CheckCircle2, Zap, TrendingUp, Award, Clock, Link as LinkIcon } from "lucide-react";
+import { useLocation } from "wouter";
+import ShopReviewGame from "@/components/minigames/ShopReviewGame";
+import DataValidationGame from "@/components/minigames/DataValidationGame";
+import SurveyGame from "@/components/minigames/SurveyGame";
+import ImageAnalysisGame from "@/components/minigames/ImageAnalysisGame";
+import CategorizationGame from "@/components/minigames/CategorizationGame";
+import UsabilityTestGame from "@/components/minigames/UsabilityTestGame";
 
 interface Missao {
   id: number;
@@ -11,7 +18,7 @@ interface Missao {
   valor: number;
   dificuldade: "facil" | "medio" | "dificil";
   tempo: number;
-  tipo: string;
+  tipo: "shop" | "validation" | "survey" | "image" | "categorization" | "usability";
   empresa: string;
 }
 
@@ -34,443 +41,321 @@ interface Badge {
 const missoes: Missao[] = [
   {
     id: 1,
-    titulo: "Pesquisa de Opinião - Google",
-    descricao: "Responda 5 perguntas sobre seus hábitos de uso de tecnologia",
+    titulo: "Avaliação de Lojas",
+    descricao: "Avalie a experiência em diferentes lojas",
     valor: 15,
     dificuldade: "facil",
-    tempo: 2,
-    tipo: "Pesquisa",
-    empresa: "Google",
+    tempo: 5,
+    tipo: "shop",
+    empresa: "Retail Co",
   },
   {
     id: 2,
-    titulo: "Validação de Dados - Amazon",
-    descricao: "Valide 10 informações de produtos para qualidade de dados",
+    titulo: "Validação de Dados",
+    descricao: "Valide informações de produtos para qualidade",
     valor: 45,
     dificuldade: "medio",
-    tempo: 5,
-    tipo: "Validação",
+    tempo: 8,
+    tipo: "validation",
     empresa: "Amazon",
   },
   {
     id: 3,
-    titulo: "Análise de Conteúdo - Meta",
-    descricao: "Analise e categorize 8 imagens por relevância e qualidade",
-    valor: 120,
-    dificuldade: "dificil",
-    tempo: 8,
-    tipo: "Análise",
-    empresa: "Meta",
+    titulo: "Pesquisa de Opinião",
+    descricao: "Responda perguntas sobre seus hábitos",
+    valor: 10,
+    dificuldade: "facil",
+    tempo: 3,
+    tipo: "survey",
+    empresa: "Google",
   },
   {
     id: 4,
-    titulo: "Teste de App - Spotify",
-    descricao: "Teste a navegação do app e reporte bugs encontrados",
+    titulo: "Análise de Imagens",
+    descricao: "Analise e descreva imagens de produtos",
     valor: 60,
     dificuldade: "medio",
-    tempo: 6,
-    tipo: "Teste",
-    empresa: "Spotify",
+    tempo: 10,
+    tipo: "image",
+    empresa: "eBay",
   },
   {
     id: 5,
-    titulo: "Pesquisa Rápida - Netflix",
-    descricao: "Responda 3 perguntas sobre preferências de conteúdo",
-    valor: 10,
+    titulo: "Categorização de Dados",
+    descricao: "Categorize itens em grupos corretos",
+    valor: 18,
     dificuldade: "facil",
-    tempo: 1,
-    tipo: "Pesquisa",
-    empresa: "Netflix",
+    tempo: 4,
+    tipo: "categorization",
+    empresa: "Shopify",
   },
   {
     id: 6,
-    titulo: "Categorização - Airbnb",
-    descricao: "Categorize 15 imagens de propriedades por tipo",
-    valor: 80,
-    dificuldade: "medio",
-    tempo: 7,
-    tipo: "Categorização",
-    empresa: "Airbnb",
-  },
-  {
-    id: 7,
-    titulo: "Análise Avançada - Microsoft",
-    descricao: "Analise complexidade de 5 interfaces de software",
-    valor: 150,
+    titulo: "Teste de Usabilidade",
+    descricao: "Teste a usabilidade de um site",
+    valor: 65,
     dificuldade: "dificil",
-    tempo: 10,
-    tipo: "Análise",
-    empresa: "Microsoft",
+    tempo: 12,
+    tipo: "usability",
+    empresa: "Netflix",
+  },
+];
+
+const badges: Badge[] = [
+  {
+    id: "iniciante",
+    nome: "Iniciante",
+    descricao: "Complete 5 missões",
+    desbloqueado: false,
+    progresso: 0,
+    meta: 5,
   },
   {
-    id: 8,
-    titulo: "Pesquisa - Apple",
-    descricao: "Responda sobre sua experiência com produtos Apple",
-    valor: 20,
-    dificuldade: "facil",
-    tempo: 3,
-    tipo: "Pesquisa",
-    empresa: "Apple",
+    id: "ganhos_100",
+    nome: "Ganhos de R$ 100",
+    descricao: "Ganhe R$ 100",
+    desbloqueado: false,
+    progresso: 0,
+    meta: 100,
+  },
+  {
+    id: "streak_5",
+    nome: "Streak de 5",
+    descricao: "Complete 5 missões em um dia",
+    desbloqueado: false,
+    progresso: 0,
+    meta: 5,
   },
 ];
 
 export default function Missoes() {
-  const [saldo, setSaldo] = useState(0);
-  const [ganhoHoje, setGanhoHoje] = useState(0);
+  const [, navigate] = useLocation();
+  const [saldoUsuario, setSaldoUsuario] = useState(0);
+  const [ganhosDia, setGanhosDia] = useState(0);
+  const [limiteDia] = useState(200);
   const [missaoAtiva, setMissaoAtiva] = useState<Missao | null>(null);
-  const [progresso, setProgresso] = useState(0);
-  const [missoesConcluidas, setMissoesConcluidas] = useState<MissaoCompletada[]>([]);
-  const [badges, setBadges] = useState<Badge[]>([
-    { id: "primeira", nome: "Primeira Missão", descricao: "Complete sua primeira missão", desbloqueado: false, progresso: 0, meta: 1 },
-    { id: "ganho100", nome: "Ganho de R$ 100", descricao: "Ganhe R$ 100 em um dia", desbloqueado: false, progresso: 0, meta: 100 },
-    { id: "ganho250", nome: "Limite Atingido", descricao: "Ganhe R$ 250 em um dia", desbloqueado: false, progresso: 0, meta: 250 },
-    { id: "acuraciaPerfeita", nome: "Acurácia Perfeita", descricao: "Complete 5 missões com 100% de acurácia", desbloqueado: false, progresso: 0, meta: 5 },
-  ]);
-  const [tempoRestante, setTempoRestante] = useState(0);
-  const [mostrarSucesso, setMostrarSucesso] = useState(false);
-  const [ultimoGanho, setUltimoGanho] = useState(0);
-
-  const LIMITE_DIARIO = 250;
+  const [missõesCompletadas, setMissõesCompletadas] = useState<MissaoCompletada[]>([]);
+  const [badgesUsuario, setBadgesUsuario] = useState<Badge[]>(badges);
+  const [referralCount, setReferralCount] = useState(0);
 
   useEffect(() => {
-    if (missaoAtiva && tempoRestante > 0) {
-      const timer = setTimeout(() => {
-        setTempoRestante(tempoRestante - 1);
-      }, 1000);
-      return () => clearTimeout(timer);
+    // Carregar dados do localStorage
+    const saldo = parseFloat(localStorage.getItem("userBalance") || "0");
+    const ganhos = parseFloat(localStorage.getItem("dailyEarnings") || "0");
+    const completadas = JSON.parse(localStorage.getItem("missõesCompletadas") || "[]");
+    const referrals = parseInt(localStorage.getItem("referralCount") || "0");
+
+    setSaldoUsuario(saldo);
+    setGanhosDia(ganhos);
+    setMissõesCompletadas(completadas);
+    setReferralCount(referrals);
+
+    // Carregar badges
+    const badgesSalvas = JSON.parse(localStorage.getItem("badges") || "[]");
+    if (badgesSalvas.length > 0) {
+      setBadgesUsuario(badgesSalvas);
     }
-  }, [tempoRestante, missaoAtiva]);
+  }, []);
 
   const getDificuldadeColor = (dificuldade: string) => {
     switch (dificuldade) {
       case "facil":
-        return "bg-green-100 text-green-700";
+        return "bg-green-100 text-green-800";
       case "medio":
-        return "bg-yellow-100 text-yellow-700";
+        return "bg-yellow-100 text-yellow-800";
       case "dificil":
-        return "bg-red-100 text-red-700";
+        return "bg-red-100 text-red-800";
       default:
-        return "bg-gray-100 text-gray-700";
+        return "bg-gray-100 text-gray-800";
     }
   };
 
-  const getDificuldadeLabel = (dificuldade: string) => {
-    switch (dificuldade) {
-      case "facil":
-        return "Fácil";
-      case "medio":
-        return "Médio";
-      case "dificil":
-        return "Difícil";
-      default:
-        return "Normal";
-    }
-  };
+  const renderMinigame = (missao: Missao) => {
+    const difficulty = missao.dificuldade === "facil" ? "easy" : missao.dificuldade === "medio" ? "medium" : "hard";
 
-  const iniciarMissao = (missao: Missao) => {
-    setMissaoAtiva(missao);
-    setProgresso(0);
-    setTempoRestante(missao.tempo * 60);
-  };
+    const handleGameComplete = (reward: number) => {
+      const novoSaldo = saldoUsuario + reward;
+      const novoGanho = ganhosDia + reward;
 
-  const completarMissao = () => {
-    if (!missaoAtiva) return;
+      // Verificar se atingiu limite diário
+      if (novoGanho > limiteDia) {
+        const excesso = novoGanho - limiteDia;
+        const rewardAjustado = reward - excesso;
+        setSaldoUsuario(saldoUsuario + rewardAjustado);
+        setGanhosDia(limiteDia);
+        localStorage.setItem("userBalance", (saldoUsuario + rewardAjustado).toString());
+        localStorage.setItem("dailyEarnings", limiteDia.toString());
+      } else {
+        setSaldoUsuario(novoSaldo);
+        setGanhosDia(novoGanho);
+        localStorage.setItem("userBalance", novoSaldo.toString());
+        localStorage.setItem("dailyEarnings", novoGanho.toString());
+      }
 
-    const novoGanho = missaoAtiva.valor;
-    const novoSaldo = saldo + novoGanho;
-    const novoGanhoHoje = ganhoHoje + novoGanho;
+      // Registrar missão completada
+      const novaCompletada: MissaoCompletada = {
+        id: missao.id,
+        titulo: missao.titulo,
+        valor: reward,
+        timestamp: Date.now(),
+      };
 
-    // Bônus por acurácia (10% extra)
-    const bonus = Math.floor(novoGanho * 0.1);
-    const totalComBonus = novoGanho + bonus;
+      const novasList = [...missõesCompletadas, novaCompletada];
+      setMissõesCompletadas(novasList);
+      localStorage.setItem("missõesCompletadas", JSON.stringify(novasList));
 
-    setSaldo(novoSaldo + bonus);
-    setGanhoHoje(novoGanhoHoje + bonus);
-    setUltimoGanho(totalComBonus);
-
-    // Adicionar ao histórico
-    const novaMissaoConcluida: MissaoCompletada = {
-      id: missaoAtiva.id,
-      titulo: missaoAtiva.titulo,
-      valor: totalComBonus,
-      timestamp: Date.now(),
-    };
-    setMissoesConcluidas([novaMissaoConcluida, ...missoesConcluidas]);
-
-    // Atualizar badges
-    const novasBadges = [...badges];
-    
-    // Badge: Primeira Missão
-    if (missoesConcluidas.length === 0) {
-      novasBadges[0].desbloqueado = true;
-      novasBadges[0].progresso = 1;
-    }
-
-    // Badge: Ganho de R$ 100
-    if (novoGanhoHoje >= 100 && !novasBadges[1].desbloqueado) {
-      novasBadges[1].desbloqueado = true;
-      novasBadges[1].progresso = 100;
-    }
-
-    // Badge: Limite Atingido
-    if (novoGanhoHoje >= 250 && !novasBadges[2].desbloqueado) {
-      novasBadges[2].desbloqueado = true;
-      novasBadges[2].progresso = 250;
-    }
-
-    // Badge: Acurácia Perfeita
-    if (missoesConcluidas.length + 1 >= 5) {
-      novasBadges[3].desbloqueado = true;
-      novasBadges[3].progresso = 5;
-    }
-
-    setBadges(novasBadges);
-
-    setMostrarSucesso(true);
-    setTimeout(() => {
       setMissaoAtiva(null);
-      setMostrarSucesso(false);
-    }, 2000);
+    };
+
+    switch (missao.tipo) {
+      case "shop":
+        return <ShopReviewGame difficulty={difficulty} onComplete={handleGameComplete} />;
+      case "validation":
+        return <DataValidationGame difficulty={difficulty} onComplete={handleGameComplete} />;
+      case "survey":
+        return <SurveyGame difficulty={difficulty} onComplete={handleGameComplete} />;
+      case "image":
+        return <ImageAnalysisGame difficulty={difficulty} onComplete={handleGameComplete} />;
+      case "categorization":
+        return <CategorizationGame difficulty={difficulty} onComplete={handleGameComplete} />;
+      case "usability":
+        return <UsabilityTestGame difficulty={difficulty} onComplete={handleGameComplete} />;
+      default:
+        return null;
+    }
   };
 
-  const podeCompletarMais = ganhoHoje < LIMITE_DIARIO;
-
-  return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white pb-12">
-      {/* Header */}
-      <div className="sticky top-0 z-40 bg-white border-b border-gray-200">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-2">
-              <img 
-                src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663621133054/XCzPMTUpgMBhOytr.png" 
-                alt="Pixee Logo" 
-                className="w-8 h-8"
-              />
-              <span className="font-bold text-gray-900">Pixee</span>
-            </div>
-            <div className="text-right">
-              <p className="text-sm text-gray-600">Saldo Total</p>
-              <p className="text-2xl font-bold text-emerald-600">R$ {saldo.toFixed(2)}</p>
-            </div>
+  if (missaoAtiva) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-blue-50 p-4">
+        <div className="max-w-2xl mx-auto">
+          <div className="mb-6 flex items-center justify-between">
+            <h1 className="text-2xl font-bold text-gray-900">{missaoAtiva.titulo}</h1>
+            <Button variant="outline" onClick={() => setMissaoAtiva(null)}>
+              Voltar
+            </Button>
           </div>
 
-          {/* Stats */}
-          <div className="grid grid-cols-2 gap-4">
-            <Card className="p-4 border border-gray-200">
-              <p className="text-xs text-gray-600 mb-1">Ganho Hoje</p>
-              <p className="text-xl font-bold text-gray-900">R$ {ganhoHoje.toFixed(2)}</p>
-              <div className="mt-2 bg-gray-200 rounded-full h-2">
-                <div
-                  className="bg-emerald-600 h-2 rounded-full transition-all duration-300"
-                  style={{ width: `${(ganhoHoje / LIMITE_DIARIO) * 100}%` }}
-                ></div>
-              </div>
-              <p className="text-xs text-gray-500 mt-1">Limite: R$ {LIMITE_DIARIO}</p>
-            </Card>
-
-            <Card className="p-4 border border-gray-200">
-              <p className="text-xs text-gray-600 mb-1">Missões Completadas</p>
-              <p className="text-xl font-bold text-gray-900">{missoesConcluidas.length}</p>
-              <p className="text-xs text-gray-500 mt-3">Hoje</p>
-            </Card>
-          </div>
+          <Card className="p-6">
+            {renderMinigame(missaoAtiva)}
+          </Card>
         </div>
       </div>
+    );
+  }
 
-      {/* Main Content */}
-      <div className="container mx-auto px-4 py-8">
-        {missaoAtiva ? (
-          // Modal de Missão
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-            <Card className="w-full max-w-md border-0 shadow-2xl">
-              {mostrarSucesso ? (
-                <div className="p-8 text-center">
-                  <div className="mb-6 flex justify-center">
-                    <div className="relative">
-                      <div className="absolute inset-0 bg-emerald-200 rounded-full animate-ping opacity-75"></div>
-                      <div className="relative w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center">
-                        <CheckCircle2 className="w-8 h-8 text-emerald-600" />
-                      </div>
-                    </div>
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-blue-50 p-4">
+      <div className="max-w-6xl mx-auto">
+        {/* Header */}
+        <div className="mb-8">
+          <h1 className="text-4xl font-bold text-gray-900 mb-2">Missões Disponíveis</h1>
+          <p className="text-gray-600">Complete tarefas e ganhe dinheiro</p>
+        </div>
+
+        {/* Saldo e Limite */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+          <Card className="p-6 bg-gradient-to-br from-blue-500 to-blue-600 text-white">
+            <p className="text-sm opacity-90 mb-1">Saldo Atual</p>
+            <p className="text-3xl font-bold">R$ {saldoUsuario.toFixed(2)}</p>
+          </Card>
+
+          <Card className="p-6 bg-gradient-to-br from-emerald-500 to-emerald-600 text-white">
+            <p className="text-sm opacity-90 mb-1">Ganho Hoje</p>
+            <p className="text-3xl font-bold">R$ {ganhosDia.toFixed(2)}</p>
+            <p className="text-xs opacity-75 mt-1">Limite: R$ {limiteDia.toFixed(2)}</p>
+          </Card>
+
+          <Card className="p-6 bg-gradient-to-br from-purple-500 to-purple-600 text-white">
+            <p className="text-sm opacity-90 mb-1">Referências</p>
+            <p className="text-3xl font-bold">{referralCount}</p>
+            <Button
+              onClick={() => navigate("/sac")}
+              size="sm"
+              className="mt-2 bg-white text-purple-600 hover:bg-gray-100"
+            >
+              <LinkIcon size={14} className="mr-1" />
+              Ver SAC
+            </Button>
+          </Card>
+        </div>
+
+        {/* Aviso de Limite */}
+        {ganhosDia >= limiteDia && (
+          <Card className="mb-8 p-4 bg-yellow-50 border-yellow-200">
+            <p className="text-yellow-800 font-semibold">
+              Você atingiu o limite diário de R$ {limiteDia.toFixed(2)}!
+            </p>
+            <p className="text-sm text-yellow-700">
+              Volte amanhã para continuar ganhando. Você pode sacar seus ganhos na página de SAC.
+            </p>
+          </Card>
+        )}
+
+        {/* Missões */}
+        <div className="mb-8">
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">Tarefas Disponíveis</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {missoes.map((missao) => (
+              <Card key={missao.id} className="p-4 hover:shadow-lg transition-shadow">
+                <div className="flex items-start justify-between mb-3">
+                  <div>
+                    <h3 className="font-bold text-gray-900">{missao.titulo}</h3>
+                    <p className="text-xs text-gray-500 mt-1">{missao.empresa}</p>
                   </div>
-                  <h3 className="text-2xl font-bold text-gray-900 mb-2">Missão Aprovada!</h3>
-                  <p className="text-emerald-600 font-bold text-3xl mb-4">+R$ {ultimoGanho.toFixed(2)}</p>
-                  <p className="text-sm text-gray-600">Bônus de acurácia incluído</p>
+                  <Badge className={getDificuldadeColor(missao.dificuldade)}>
+                    {missao.dificuldade === "facil" ? "Fácil" : missao.dificuldade === "medio" ? "Médio" : "Difícil"}
+                  </Badge>
                 </div>
-              ) : (
-                <div className="p-6">
-                  <div className="mb-6">
-                    <div className="flex items-start justify-between mb-4">
+
+                <p className="text-sm text-gray-600 mb-4">{missao.descricao}</p>
+
+                <div className="flex items-center gap-4 mb-4 text-sm">
+                  <div className="flex items-center gap-1 text-green-600 font-semibold">
+                    <TrendingUp size={16} />
+                    R$ {missao.valor.toFixed(2)}
+                  </div>
+                  <div className="flex items-center gap-1 text-gray-500">
+                    <Clock size={16} />
+                    {missao.tempo}min
+                  </div>
+                </div>
+
+                <Button
+                  onClick={() => setMissaoAtiva(missao)}
+                  disabled={ganhosDia >= limiteDia}
+                  className="w-full"
+                >
+                  Começar Missão
+                </Button>
+              </Card>
+            ))}
+          </div>
+        </div>
+
+        {/* Histórico */}
+        {missõesCompletadas.length > 0 && (
+          <div>
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">Histórico de Ganhos</h2>
+            <Card className="p-4">
+              <div className="space-y-2">
+                {missõesCompletadas.slice(-5).reverse().map((missao, index) => (
+                  <div key={index} className="flex items-center justify-between py-2 border-b last:border-b-0">
+                    <div className="flex items-center gap-3">
+                      <CheckCircle2 size={18} className="text-green-600" />
                       <div>
-                        <h3 className="text-xl font-bold text-gray-900">{missaoAtiva.titulo}</h3>
-                        <p className="text-sm text-gray-600 mt-1">{missaoAtiva.empresa}</p>
+                        <p className="font-semibold text-gray-900">{missao.titulo}</p>
+                        <p className="text-xs text-gray-500">
+                          {new Date(missao.timestamp).toLocaleTimeString("pt-BR")}
+                        </p>
                       </div>
-                      <p className="text-2xl font-bold text-emerald-600">R$ {missaoAtiva.valor}</p>
                     </div>
-
-                    <p className="text-gray-700 mb-4">{missaoAtiva.descricao}</p>
-
-                    <div className="flex gap-2 mb-4">
-                      <Badge className={getDificuldadeColor(missaoAtiva.dificuldade)}>
-                        {getDificuldadeLabel(missaoAtiva.dificuldade)}
-                      </Badge>
-                      <Badge className="bg-blue-100 text-blue-700">
-                        <Clock className="w-3 h-3 mr-1" />
-                        {missaoAtiva.tempo} min
-                      </Badge>
-                    </div>
+                    <p className="font-bold text-green-600">+R$ {missao.valor.toFixed(2)}</p>
                   </div>
-
-                  {/* Progresso da Missão */}
-                  <div className="mb-6">
-                    <div className="flex items-center justify-between mb-2">
-                      <p className="text-sm font-semibold text-gray-900">Progresso</p>
-                      <p className="text-sm text-gray-600">{Math.floor((progresso / 100) * 100)}%</p>
-                    </div>
-                    <div className="bg-gray-200 rounded-full h-3">
-                      <div
-                        className="bg-emerald-600 h-3 rounded-full transition-all duration-300"
-                        style={{ width: `${progresso}%` }}
-                      ></div>
-                    </div>
-                  </div>
-
-                  {/* Timer */}
-                  <div className="text-center mb-6">
-                    <p className="text-sm text-gray-600 mb-2">Tempo Restante</p>
-                    <p className="text-3xl font-bold text-gray-900">
-                      {Math.floor(tempoRestante / 60)}:{(tempoRestante % 60).toString().padStart(2, "0")}
-                    </p>
-                  </div>
-
-                  {/* Buttons */}
-                  <div className="space-y-3">
-                    <Button
-                      onClick={() => {
-                        setProgresso(Math.min(100, progresso + 25));
-                        if (progresso >= 75) {
-                          completarMissao();
-                        }
-                      }}
-                      className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3"
-                    >
-                      Avançar Missão
-                    </Button>
-                    <Button
-                      onClick={() => setMissaoAtiva(null)}
-                      variant="outline"
-                      className="w-full"
-                    >
-                      Cancelar
-                    </Button>
-                  </div>
-                </div>
-              )}
+                ))}
+              </div>
             </Card>
           </div>
-        ) : (
-          <>
-            {/* Badges Section */}
-            <div className="mb-12">
-              <h2 className="text-xl font-bold text-gray-900 mb-4">Conquistas</h2>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                {badges.map((badge) => (
-                  <Card
-                    key={badge.id}
-                    className={`p-4 text-center border-2 transition-all ${
-                      badge.desbloqueado
-                        ? "border-emerald-200 bg-emerald-50"
-                        : "border-gray-200 bg-gray-50 opacity-60"
-                    }`}
-                  >
-                    <div className="mb-2 flex justify-center">
-                      <Award className={`w-6 h-6 ${badge.desbloqueado ? "text-emerald-600" : "text-gray-400"}`} />
-                    </div>
-                    <p className="text-xs font-semibold text-gray-900">{badge.nome}</p>
-                    <p className="text-xs text-gray-600 mt-1">{badge.progresso}/{badge.meta}</p>
-                  </Card>
-                ))}
-              </div>
-            </div>
-
-            {/* Missões Section */}
-            <div className="mb-12">
-              <h2 className="text-xl font-bold text-gray-900 mb-4">Missões Disponíveis</h2>
-              {!podeCompletarMais && (
-                <Card className="p-4 bg-blue-50 border border-blue-200 mb-6">
-                  <p className="text-sm text-blue-800">
-                    Você atingiu o limite diário de R$ {LIMITE_DIARIO}. Volte amanhã para mais missões!
-                  </p>
-                </Card>
-              )}
-              <div className="grid gap-4">
-                {missoes.map((missao) => (
-                  <Card
-                    key={missao.id}
-                    className="p-4 border border-gray-200 hover:shadow-md transition-all cursor-pointer"
-                    onClick={() => podeCompletarMais && iniciarMissao(missao)}
-                  >
-                    <div className="flex items-start justify-between mb-3">
-                      <div className="flex-1">
-                        <h3 className="font-bold text-gray-900">{missao.titulo}</h3>
-                        <p className="text-sm text-gray-600 mt-1">{missao.descricao}</p>
-                      </div>
-                      <p className="text-lg font-bold text-emerald-600 ml-4">R$ {missao.valor}</p>
-                    </div>
-
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <Badge className={getDificuldadeColor(missao.dificuldade)}>
-                        {getDificuldadeLabel(missao.dificuldade)}
-                      </Badge>
-                      <Badge className="bg-purple-100 text-purple-700">{missao.tipo}</Badge>
-                      <Badge className="bg-blue-100 text-blue-700">
-                        <Clock className="w-3 h-3 mr-1" />
-                        {missao.tempo} min
-                      </Badge>
-                    </div>
-
-                    {podeCompletarMais && (
-                      <Button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          iniciarMissao(missao);
-                        }}
-                        className="w-full mt-4 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold"
-                      >
-                        Iniciar Missão
-                      </Button>
-                    )}
-                  </Card>
-                ))}
-              </div>
-            </div>
-
-            {/* Histórico */}
-            {missoesConcluidas.length > 0 && (
-              <div>
-                <h2 className="text-xl font-bold text-gray-900 mb-4">Histórico de Ganhos</h2>
-                <div className="space-y-3">
-                  {missoesConcluidas.slice(0, 10).map((missao, index) => (
-                    <Card key={index} className="p-4 border border-gray-200">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          <CheckCircle2 className="w-5 h-5 text-emerald-600" />
-                          <div>
-                            <p className="font-semibold text-gray-900">{missao.titulo}</p>
-                            <p className="text-xs text-gray-500">
-                              {new Date(missao.timestamp).toLocaleTimeString("pt-BR")}
-                            </p>
-                          </div>
-                        </div>
-                        <p className="font-bold text-emerald-600">+R$ {missao.valor.toFixed(2)}</p>
-                      </div>
-                    </Card>
-                  ))}
-                </div>
-              </div>
-            )}
-          </>
         )}
       </div>
     </div>

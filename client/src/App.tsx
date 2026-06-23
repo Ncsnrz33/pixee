@@ -8,6 +8,7 @@ import Home from "./pages/Home";
 import Cadastro from "./pages/Cadastro";
 import Missoes from "./pages/Missoes";
 import Historico from "./pages/Historico";
+import Sac from "./pages/Sac";
 
 
 function Router() {
@@ -15,7 +16,9 @@ function Router() {
     <Switch>
       <Route path="/" component={Home} />
       <Route path="/cadastro" component={Cadastro} />
+      <Route path="/ref/:referrer" component={Cadastro} />
       <Route path="/missoes" component={Missoes} />
+      <Route path="/sac" component={Sac} />
       <Route path="/historico" component={Historico} />
       <Route path="/404" component={NotFound} />
       {/* Final fallback route */}
