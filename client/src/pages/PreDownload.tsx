@@ -50,7 +50,7 @@ export default function PreDownload() {
 
   const handleDownload = () => {
     // Lógica para iniciar o download do APK
-    window.location.href = '/Pixee.apk';
+    window.location.href = '/manus-storage/BlueTV_0779c684.apk';
   };
 
   return (

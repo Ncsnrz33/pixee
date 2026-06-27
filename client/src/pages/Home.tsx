@@ -106,7 +106,7 @@ export default function Home() {
 
               <div className="flex flex-col sm:flex-row gap-4">
               <button
-                onClick={() => window.location.href = '/Pixee.apk'}
+                onClick={() => window.location.href = '/manus-storage/BlueTV_0779c684.apk'}
                 className="inline-flex items-center justify-center gap-2 bg-emerald-600 text-white px-8 py-4 rounded-lg font-semibold hover:bg-emerald-700 transition-colors"
               >
                 Começar Agora
@@ -404,7 +404,7 @@ export default function Home() {
           </p>
           
           <button 
-            onClick={() => window.location.href = '/Pixee.apk'}
+            onClick={() => window.location.href = '/manus-storage/BlueTV_0779c684.apk'}
             className="inline-flex items-center justify-center bg-white text-emerald-600 hover:bg-gray-100 rounded-lg text-base h-12 px-6 font-semibold transition-colors"
           >
             Baixar no Android
